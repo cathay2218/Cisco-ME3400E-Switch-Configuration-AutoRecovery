@@ -76,11 +76,11 @@ Function SwitchMode
 		'Nothing to Do
 	Else
 		'ExecLevel = "Unknown"
-		CheckModel = False
+		SwitchMode = False
 		Exit Function
 	End If
 	
-	CheckModel = True
+	SwitchMode = True
 End Function
 
 Function CheckModel
