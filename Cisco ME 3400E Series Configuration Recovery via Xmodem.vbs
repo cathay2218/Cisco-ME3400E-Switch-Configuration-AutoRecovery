@@ -18,6 +18,9 @@ Function Main
 		Exit Function
 	End If
 	
+	'Check Switch Execute Mode
+	SwitchMode
+	
 	'Switch Model Check
 	If CheckModel = False Then
 		MsgBox "This Switch is NOT Cisco ME 3400E Series, Script Exit!!", 48, SCRIPT_TITLE 'vbOKOnly = 0, Warning Message icon = 48
@@ -40,6 +43,49 @@ Function Main
 	
 	'Upload Switch Configuration File and Reboot
 	Recovery
+End Function
+
+Function SwitchMode
+	'Read Current Line
+	Dim CURRENT_ROW_CONTENT
+	CURRENT_ROW_CONTENT = crt.Screen.Get(crt.Screen.CurrentRow, 0, crt.Screen.CurrentRow, 500)
+	
+	Dim ExecLevel
+	
+	If InStr(CURRENT_ROW_CONTENT, ">") <> 0 then
+		ExecLevel = "UserMode"
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config)#") <> 0 then
+		ExecLevel = "ConfigMode"
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-if)#") <> 0 then
+		ExecLevel = "ConfigMode-Interface"
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-vlan)#") <> 0 then
+		ExecLevel = "ConfigMode-VLAN"
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-line)#") <> 0 then
+		ExecLevel = "ConfigMode-Line"
+	ElseIf InStr(CURRENT_ROW_CONTENT, "#") <> 0 then
+		ExecLevel = "PrivilegeMode"
+	Else
+		ExecLevel = "Unknown"
+	End If
+	
+	'Check Execute Level
+	crt.Screen.Send "" & vbCr
+	If ExecLevel = "Unknown" then
+		MsgBox "UNABLE to Confirm Switch Execute Level, Script Exit!!", 48, SCRIPT_TITLE 'vbOKOnly = 0, Warning Message icon = 48
+		Exit Function
+	ElseIf ExecLevel = "UserMode" then
+		'Nothing to Do
+	ElseIf ExecLevel = "PrivilegeMode" then
+		'Nothing to Do
+	ElseIf ExecLevel = "ConfigMode" then
+		crt.Screen.Send "end" & vbCr
+	ElseIf ExecLevel = "ConfigMode-Interface" then
+		crt.Screen.Send "end" & vbCr
+	ElseIf ExecLevel = "ConfigMode-VLAN" then
+		crt.Screen.Send "end" & vbCr
+	ElseIf ExecLevel = "ConfigMode-Line" then
+		crt.Screen.Send "end" & vbCr
+	End If
 End Function
 
 Function CheckModel
@@ -80,9 +126,9 @@ Function SelectConfig
 	ConfigFilePath = objExec.StdOut.ReadLine
 End Function
 
-Function Recovery
-	'Check Privilege Mode
-	crt.Screen.Send "end" & vbCr
+Function Recovery	
+	'Enter Privilege Mode
+	crt.Screen.Send "" & vbCr
 	crt.Screen.Send "enable" & vbCr
 	crt.Screen.Send "enable" & vbCr
 	crt.Screen.Send "enable" & vbCr
@@ -114,12 +160,12 @@ Function Recovery
 	
 	'Configuration upload complete, Restart Switch
 	crt.Screen.WaitForString("bytes copied in")
-	crt.Screen.Send "reload" & vbCr
-	crt.Screen.WaitForString("Proceed with reload")
-	crt.Screen.Send "" & vbCr
+	'crt.Screen.Send "reload" & vbCr
+	'crt.Screen.WaitForString("Proceed with reload")
+	'crt.Screen.Send "" & vbCr
 	
 	'Show Interact Message
-	crt.Screen.WaitForString("Reload Reason: Reload command")
+	'crt.Screen.WaitForString("Reload Reason: Reload command")
 	MsgBox "Switch has been Restart" & vbCr & "Configuration Recovery Complete!!", 64, SCRIPT_TITLE 'vbOKOnly = 0, Information Message icon = 64
 End Function
 
