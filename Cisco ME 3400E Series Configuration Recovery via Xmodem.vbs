@@ -46,45 +46,34 @@ Function Main
 End Function
 
 Function SwitchMode
+	crt.Screen.Send "" & vbCr
+	
 	'Read Current Line
 	Dim CURRENT_ROW_CONTENT
 	CURRENT_ROW_CONTENT = crt.Screen.Get(crt.Screen.CurrentRow, 0, crt.Screen.CurrentRow, 500)
 	
-	Dim ExecLevel
-	
-	If InStr(CURRENT_ROW_CONTENT, ">") <> 0 then
-		ExecLevel = "UserMode"
-	ElseIf InStr(CURRENT_ROW_CONTENT, "(config)#") <> 0 then
-		ExecLevel = "ConfigMode"
-	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-if)#") <> 0 then
-		ExecLevel = "ConfigMode-Interface"
-	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-vlan)#") <> 0 then
-		ExecLevel = "ConfigMode-VLAN"
-	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-line)#") <> 0 then
-		ExecLevel = "ConfigMode-Line"
-	ElseIf InStr(CURRENT_ROW_CONTENT, "#") <> 0 then
-		ExecLevel = "PrivilegeMode"
-	Else
-		ExecLevel = "Unknown"
-	End If
-	
 	'Check Execute Level
-	crt.Screen.Send "" & vbCr
-	If ExecLevel = "Unknown" then
+	If InStr(CURRENT_ROW_CONTENT, ">") <> 0 then
+		'ExecLevel = "UserMode"
+		'Nothing to Do
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config)#") <> 0 then
+		'ExecLevel = "ConfigMode"
+		crt.Screen.Send "end" & vbCr
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-if)#") <> 0 then
+		'ExecLevel = "ConfigMode-Interface"
+		crt.Screen.Send "end" & vbCr
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-vlan)#") <> 0 then
+		'ExecLevel = "ConfigMode-VLAN"
+		crt.Screen.Send "end" & vbCr
+	ElseIf InStr(CURRENT_ROW_CONTENT, "(config-line)#") <> 0 then
+		'ExecLevel = "ConfigMode-Line"
+		crt.Screen.Send "end" & vbCr
+	ElseIf InStr(CURRENT_ROW_CONTENT, "#") <> 0 then
+		'ExecLevel = "PrivilegeMode"
+		'Nothing to Do
+	Else
+		'ExecLevel = "Unknown"
 		MsgBox "UNABLE to Confirm Switch Execute Level, Script Exit!!", 48, SCRIPT_TITLE 'vbOKOnly = 0, Warning Message icon = 48
-		Exit Function
-	ElseIf ExecLevel = "UserMode" then
-		'Nothing to Do
-	ElseIf ExecLevel = "PrivilegeMode" then
-		'Nothing to Do
-	ElseIf ExecLevel = "ConfigMode" then
-		crt.Screen.Send "end" & vbCr
-	ElseIf ExecLevel = "ConfigMode-Interface" then
-		crt.Screen.Send "end" & vbCr
-	ElseIf ExecLevel = "ConfigMode-VLAN" then
-		crt.Screen.Send "end" & vbCr
-	ElseIf ExecLevel = "ConfigMode-Line" then
-		crt.Screen.Send "end" & vbCr
 	End If
 End Function
 
@@ -160,12 +149,12 @@ Function Recovery
 	
 	'Configuration upload complete, Restart Switch
 	crt.Screen.WaitForString("bytes copied in")
-	'crt.Screen.Send "reload" & vbCr
-	'crt.Screen.WaitForString("Proceed with reload")
-	'crt.Screen.Send "" & vbCr
+	crt.Screen.Send "reload" & vbCr
+	crt.Screen.WaitForString("Proceed with reload")
+	crt.Screen.Send "" & vbCr
 	
 	'Show Interact Message
-	'crt.Screen.WaitForString("Reload Reason: Reload command")
+	crt.Screen.WaitForString("Reload Reason: Reload command")
 	MsgBox "Switch has been Restart" & vbCr & "Configuration Recovery Complete!!", 64, SCRIPT_TITLE 'vbOKOnly = 0, Information Message icon = 64
 End Function
 
