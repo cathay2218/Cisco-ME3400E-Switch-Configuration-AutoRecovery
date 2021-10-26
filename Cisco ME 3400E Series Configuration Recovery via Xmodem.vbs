@@ -19,7 +19,10 @@ Function Main
 	End If
 	
 	'Check Switch Execute Mode
-	SwitchMode
+	If SwitchMode = False Then
+		MsgBox "UNABLE to Confirm Switch Execute Level, Script Exit!!", 48, SCRIPT_TITLE 'vbOKOnly = 0, Warning Message icon = 48
+		Exit Function
+	End If
 	
 	'Switch Model Check
 	If CheckModel = False Then
@@ -73,8 +76,11 @@ Function SwitchMode
 		'Nothing to Do
 	Else
 		'ExecLevel = "Unknown"
-		MsgBox "UNABLE to Confirm Switch Execute Level, Script Exit!!", 48, SCRIPT_TITLE 'vbOKOnly = 0, Warning Message icon = 48
+		CheckModel = False
+		Exit Function
 	End If
+	
+	CheckModel = True
 End Function
 
 Function CheckModel
