@@ -127,6 +127,13 @@ Function Recovery
 	crt.Screen.Send "enable" & vbCr
 	crt.Screen.Send "enable" & vbCr
 	crt.Screen.Send "enable" & vbCr
+	crt.Screen.Send "" & vbCr
+	crt.Screen.Send "" & vbCr
+	
+	If (crt.Screen.WaitForString("#", 3) = False) Then 
+		MsgBox "Can NOT Enable Privilege Mode, Script Exit!!", 64, SCRIPT_TITLE 'vbOKOnly = 0, Information Message icon = 64
+		Exit Function
+	End If
 	
 	'Clear Original Configuration
 		'A. Clear VLAN Database
